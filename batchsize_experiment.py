@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[15]:
+# In[1]:
 
 
 import numpy as np
@@ -17,17 +17,16 @@ from keras import backend as K
 from keras.models import Sequential
 from keras.layers import Dense, InputLayer
 from keras.utils import print_summary
-from tqdm import tqdm_notebook as tqdm
 import json
 
 
-# In[16]:
+# In[2]:
 
 
 tf.logging.set_verbosity(tf.logging.ERROR)
 
 
-# In[17]:
+# In[3]:
 
 
 def set_seed(seed:int):
@@ -39,14 +38,48 @@ def set_seed(seed:int):
     tf.set_random_seed(seed)
 
 
-# In[18]:
+# In[4]:
+
+
+def is_gpu_available():
+    return bool(K.tensorflow_backend._get_available_gpus())
+
+
+# In[5]:
+
+
+def isnotebook():
+    try:
+        shell = get_ipython().__class__.__name__
+        if shell == 'ZMQInteractiveShell':
+            return True   # Jupyter notebook or qtconsole
+        elif shell == 'TerminalInteractiveShell':
+            return False  # Terminal running IPython
+        else:
+            return False  # Other type (?)
+    except NameError:
+        return False      # Probably standard Python interpreter
+
+
+# In[6]:
+
+
+if isnotebook():
+    from tqdm import tqdm_notebook as tqdm
+    from keras_tqdm import TQDMNotebookCallback as ktqdm
+else: 
+    from tqdm import tqdm
+    from keras_tqdm import TQDMCallback as ktqdm
+
+
+# In[7]:
 
 
 def load_dataset(x:str, y:str)->Tuple[np.ndarray, np.ndarray]:
-    return pd.read_csv(x), pd.read_csv(y)
+    return pd.read_csv(x, index_col=0).values, pd.read_csv(y, index_col=0).values
 
 
-# In[19]:
+# In[8]:
 
 
 def scale(train:np.ndarray, test:np.ndarray):
@@ -55,7 +88,7 @@ def scale(train:np.ndarray, test:np.ndarray):
     return scaler.transform(train), scaler.transform(test)
 
 
-# In[20]:
+# In[9]:
 
 
 def split_dataset(dataset:Tuple[np.ndarray, np.ndarray], seed:int, test_size:float=0.3)->Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
@@ -66,7 +99,7 @@ def split_dataset(dataset:Tuple[np.ndarray, np.ndarray], seed:int, test_size:flo
     return train_test_split(*dataset, test_size=test_size, random_state=seed)
 
 
-# In[21]:
+# In[10]:
 
 
 def scale_split_dataset(dataset, seed:int, test_size:float=0.3):
@@ -75,7 +108,7 @@ def scale_split_dataset(dataset, seed:int, test_size:float=0.3):
     return (*scale(x_train, x_test), y_train, y_test)
 
 
-# In[22]:
+# In[11]:
 
 
 def auprc(y_true, y_pred)->float:
@@ -84,7 +117,7 @@ def auprc(y_true, y_pred)->float:
     return score
 
 
-# In[23]:
+# In[12]:
 
 
 def mlp(input_size:int):
@@ -92,7 +125,7 @@ def mlp(input_size:int):
     set_seed(42)
     model = Sequential([
         InputLayer(input_shape=(input_size,)),
-        *[Dense(input_size, activation="relu") for i in range(3)],
+        *[Dense(input_size, activation="relu") for i in range(5)],
         Dense(1, activation="sigmoid")
     ])
     model.compile(
@@ -103,7 +136,7 @@ def mlp(input_size:int):
     return model
 
 
-# In[24]:
+# In[13]:
 
 
 def fit(model:Sequential, x_train:np.ndarray, x_test:np.ndarray, y_train:np.ndarray, y_test:np.ndarray, epochs:int, batch_size:int):
@@ -124,48 +157,51 @@ def fit(model:Sequential, x_train:np.ndarray, x_test:np.ndarray, y_train:np.ndar
         verbose=0,
         validation_data=(x_test, y_test),
         epochs=epochs,
+        callbacks=[ktqdm()],
         batch_size=batch_size
     )
 
 
-# In[25]:
+# In[14]:
 
 
-def train_holdouts(holdouts:int, batch_size:int, datapoints:str, labels:str, epochs:int):
-    dataset = load_dataset(datapoints, labels)
-    return np.mean([fit(
+def train_holdouts(holdouts:int, batch_size:int, dataset, epochs:int):
+    return [fit(
         mlp(26),
         *scale_split_dataset(dataset, holdout),
         epochs, 
         batch_size
-    ).history["val_auprc"][-1] for holdout in tqdm(range(holdouts), desc="Holdouts", leave=False)])
+    ).history["val_auprc"][-1] for holdout in tqdm(range(holdouts), desc="Holdouts", leave=False)]
 
 
-# In[26]:
+# In[15]:
 
 
 def train_batch_sizes(batch_sizes:List[int], datapoints:str, labels:str, holdouts:int, epochs:int):
+    dataset = load_dataset(datapoints, labels)
     return list(zip(*[
-        (batch_size, train_holdouts(holdouts, batch_size, datapoints, labels, epochs)) for batch_size in tqdm(batch_sizes, desc="Batch sizes")
+        (batch_size, train_holdouts(holdouts, batch_size, dataset, epochs)) for batch_size in tqdm(batch_sizes, desc="Batch sizes")
     ]))
 
 
-# In[27]:
+# In[16]:
 
 
 def get_batch_sizes(n:int):
     return [
-        i**2 + int(1.01**i) for i in range(1, n)
+        i**2 + int(1.01**i) for i in range(1, n+1)
     ]
 
 
-# In[28]:
+# In[17]:
 
 
-holdouts = 10
-epochs = 100
-batch_sizes = get_batch_sizes(100)
-auprcs = train_batch_sizes(batch_sizes, "folds/folds_x_9.csv", "folds/folds_y_9.csv", holdouts, epochs)
+holdouts = 1
+epochs = 1
+batch_sizes = get_batch_sizes(1)
+if is_gpu_available():
+    print("Working with GPU!")
+auprcs = train_batch_sizes(batch_sizes, "folds/x_4.csv", "folds/y_4.csv", holdouts, epochs)
 
 
 # In[ ]:
