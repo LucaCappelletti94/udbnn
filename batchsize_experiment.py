@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[1]:
+# In[ ]:
 
 
 import numpy as np
@@ -20,13 +20,13 @@ from keras.utils import print_summary
 import json
 
 
-# In[2]:
+# In[ ]:
 
 
 tf.logging.set_verbosity(tf.logging.ERROR)
 
 
-# In[3]:
+# In[ ]:
 
 
 def set_seed(seed:int):
@@ -38,14 +38,14 @@ def set_seed(seed:int):
     tf.set_random_seed(seed)
 
 
-# In[4]:
+# In[ ]:
 
 
 def is_gpu_available():
     return bool(K.tensorflow_backend._get_available_gpus())
 
 
-# In[5]:
+# In[ ]:
 
 
 def isnotebook():
@@ -61,7 +61,7 @@ def isnotebook():
         return False      # Probably standard Python interpreter
 
 
-# In[6]:
+# In[ ]:
 
 
 if isnotebook():
@@ -72,14 +72,14 @@ else:
     from keras_tqdm import TQDMCallback as ktqdm
 
 
-# In[7]:
+# In[ ]:
 
 
 def load_dataset(x:str, y:str)->Tuple[np.ndarray, np.ndarray]:
     return pd.read_csv(x, index_col=0).values, pd.read_csv(y, index_col=0).values
 
 
-# In[8]:
+# In[ ]:
 
 
 def scale(train:np.ndarray, test:np.ndarray):
@@ -88,7 +88,7 @@ def scale(train:np.ndarray, test:np.ndarray):
     return scaler.transform(train), scaler.transform(test)
 
 
-# In[9]:
+# In[ ]:
 
 
 def split_dataset(dataset:Tuple[np.ndarray, np.ndarray], seed:int, test_size:float=0.3)->Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
@@ -99,7 +99,7 @@ def split_dataset(dataset:Tuple[np.ndarray, np.ndarray], seed:int, test_size:flo
     return train_test_split(*dataset, test_size=test_size, random_state=seed)
 
 
-# In[10]:
+# In[ ]:
 
 
 def scale_split_dataset(dataset, seed:int, test_size:float=0.3):
@@ -108,7 +108,7 @@ def scale_split_dataset(dataset, seed:int, test_size:float=0.3):
     return (*scale(x_train, x_test), y_train, y_test)
 
 
-# In[11]:
+# In[ ]:
 
 
 def auprc(y_true, y_pred)->float:
@@ -117,7 +117,7 @@ def auprc(y_true, y_pred)->float:
     return score
 
 
-# In[12]:
+# In[ ]:
 
 
 def mlp(input_size:int):
@@ -136,7 +136,7 @@ def mlp(input_size:int):
     return model
 
 
-# In[13]:
+# In[ ]:
 
 
 def fit(model:Sequential, x_train:np.ndarray, x_test:np.ndarray, y_train:np.ndarray, y_test:np.ndarray, epochs:int, batch_size:int):
@@ -162,51 +162,78 @@ def fit(model:Sequential, x_train:np.ndarray, x_test:np.ndarray, y_train:np.ndar
     )
 
 
-# In[14]:
+# In[ ]:
 
 
-def train_holdouts(holdouts:int, batch_size:int, dataset, epochs:int):
-    return [fit(
-        mlp(26),
-        *scale_split_dataset(dataset, holdout),
-        epochs, 
-        batch_size
-    ).history["val_auprc"][-1] for holdout in tqdm(range(holdouts), desc="Holdouts", leave=False)]
-
-
-# In[15]:
-
-
-def train_batch_sizes(batch_sizes:List[int], datapoints:str, labels:str, holdouts:int, epochs:int):
-    dataset = load_dataset(datapoints, labels)
-    return list(zip(*[
-        (batch_size, train_holdouts(holdouts, batch_size, dataset, epochs)) for batch_size in tqdm(batch_sizes, desc="Batch sizes")
-    ]))
-
-
-# In[16]:
-
-
-def get_batch_sizes(n:int):
-    return [
-        i**2 + int(1.01**i) for i in range(1, n+1)
-    ]
-
-
-# In[17]:
-
-
-holdouts = 1
-epochs = 1
-batch_sizes = get_batch_sizes(1)
-if is_gpu_available():
-    print("Working with GPU!")
-auprcs = train_batch_sizes(batch_sizes, "folds/x_4.csv", "folds/y_4.csv", holdouts, epochs)
+def store_auprc(batch_size:int, holdout:int, auprc:float, path:str="auprcs.json"):
+    if os.path.exists("auprcs.json"):
+        with open("auprcs.json", "r") as f:
+            auprcs = json.load(f)
+    else:
+        auprcs = {}
+    if batch_size not in auprcs:
+        auprcs[batch_size] = {}
+    if holdout not in auprcs[batch_size]:
+        auprcs[batch_size][holdout] = auprc
+    with open("auprcs.json", "w") as f:
+        json.dump(auprcs, f)
 
 
 # In[ ]:
 
 
-with open("auprcs.json", "w") as f:
-    json.dump(auprcs, f)
+def is_auprc_cached(batch_size:int, holdout:int, path:str="auprcs.json"):
+    with open("auprcs.json", "r") as f:
+        auprcs = json.load(f)
+        return batch_size in auprcs and holdout in auprcs[batch_size]
+
+
+# In[ ]:
+
+
+def train_holdouts(batch_size:int, holdouts:int, dataset, epochs:int):
+    [
+        store_auprc(
+            batch_size,
+            holdout,
+            fit(
+                mlp(26),
+                *scale_split_dataset(dataset, holdout),
+                epochs, 
+                batch_size
+            ).history["val_auprc"][-1])
+        for holdout in tqdm(range(holdouts), desc="Holdouts for batch_size {batch_size}".format(batch_size=batch_size), leave=False)
+        if not is_auprc_cached(batch_size, holdout)
+    ]
+
+
+# In[ ]:
+
+
+def train_batch_sizes(batch_sizes:List[int], datapoints:str, labels:str, holdouts:int, epochs:int):
+    dataset = load_dataset(datapoints, labels)
+    [
+        train_holdouts(batch_size, holdouts, dataset, epochs) 
+        for batch_size in tqdm(batch_sizes, desc="Batch sizes")
+    ]
+
+
+# In[ ]:
+
+
+def get_batch_sizes(n:int, offset:int=2):
+    return [
+        i**2 + int(1.175**i) for i in range(offset, n+offset)
+    ]
+
+
+# In[ ]:
+
+
+holdouts = 10
+epochs = 100
+batch_sizes = get_batch_sizes(50)
+if is_gpu_available():
+    print("Working with GPU!")
+train_batch_sizes(batch_sizes, "folds/x_4.csv", "folds/y_4.csv", holdouts, epochs)
 
