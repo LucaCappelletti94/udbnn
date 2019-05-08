@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[ ]:
+# In[1]:
 
 
 import numpy as np
@@ -18,15 +18,16 @@ from keras.models import Sequential
 from keras.layers import Dense, InputLayer
 from keras.utils import print_summary
 import json
+from notipy_me import Notipy
 
 
-# In[ ]:
+# In[2]:
 
 
 tf.logging.set_verbosity(tf.logging.ERROR)
 
 
-# In[ ]:
+# In[3]:
 
 
 def set_seed(seed:int):
@@ -38,14 +39,14 @@ def set_seed(seed:int):
     tf.set_random_seed(seed)
 
 
-# In[ ]:
+# In[4]:
 
 
 def is_gpu_available():
     return bool(K.tensorflow_backend._get_available_gpus())
 
 
-# In[ ]:
+# In[5]:
 
 
 def isnotebook():
@@ -61,7 +62,7 @@ def isnotebook():
         return False      # Probably standard Python interpreter
 
 
-# In[ ]:
+# In[6]:
 
 
 if isnotebook():
@@ -72,14 +73,14 @@ else:
     from keras_tqdm import TQDMCallback as ktqdm
 
 
-# In[ ]:
+# In[7]:
 
 
 def load_dataset(x:str, y:str)->Tuple[np.ndarray, np.ndarray]:
     return pd.read_csv(x, index_col=0).values, pd.read_csv(y, index_col=0).values
 
 
-# In[ ]:
+# In[8]:
 
 
 def scale(train:np.ndarray, test:np.ndarray):
@@ -88,7 +89,7 @@ def scale(train:np.ndarray, test:np.ndarray):
     return scaler.transform(train), scaler.transform(test)
 
 
-# In[ ]:
+# In[9]:
 
 
 def split_dataset(dataset:Tuple[np.ndarray, np.ndarray], seed:int, test_size:float=0.3)->Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
@@ -99,7 +100,7 @@ def split_dataset(dataset:Tuple[np.ndarray, np.ndarray], seed:int, test_size:flo
     return train_test_split(*dataset, test_size=test_size, random_state=seed)
 
 
-# In[ ]:
+# In[10]:
 
 
 def scale_split_dataset(dataset, seed:int, test_size:float=0.3):
@@ -108,7 +109,7 @@ def scale_split_dataset(dataset, seed:int, test_size:float=0.3):
     return (*scale(x_train, x_test), y_train, y_test)
 
 
-# In[ ]:
+# In[11]:
 
 
 def auprc(y_true, y_pred)->float:
@@ -117,7 +118,16 @@ def auprc(y_true, y_pred)->float:
     return score
 
 
-# In[ ]:
+# In[12]:
+
+
+def auroc(y_true, y_pred)->float:
+    score = tf.metrics.auc(y_true, y_pred, curve="ROC", summation_method="careful_interpolation")[1]
+    K.get_session().run(tf.local_variables_initializer())
+    return score
+
+
+# In[13]:
 
 
 def mlp(input_size:int):
@@ -130,16 +140,16 @@ def mlp(input_size:int):
     ])
     model.compile(
         optimizer="nadam",
-        loss='mean_squared_error',
-        metrics=[auprc]
+        loss='binary_crossentropy',
+        metrics=[auprc, auroc, "accuracy"]
     )
     return model
 
 
-# In[ ]:
+# In[14]:
 
 
-def fit(model:Sequential, x_train:np.ndarray, x_test:np.ndarray, y_train:np.ndarray, y_test:np.ndarray, epochs:int, batch_size:int):
+def fit(model:Sequential, dataset, holdout, epochs:int, batch_size:int):
     """Train the given model on given train data for the given epochs number.
         model:Sequential, the model to be trained.
         x_train:np.ndarray, the input for training the model.
@@ -150,6 +160,7 @@ def fit(model:Sequential, x_train:np.ndarray, x_test:np.ndarray, y_train:np.ndar
         initial_epoch:int, starting epoch.
         batch_size:int, number of datapoints per training batch.
     """
+    x_train, x_test, y_train, y_test = scale_split_dataset(dataset, holdout)
     return model.fit(
         x_train,
         y_train,
@@ -157,17 +168,17 @@ def fit(model:Sequential, x_train:np.ndarray, x_test:np.ndarray, y_train:np.ndar
         verbose=0,
         validation_data=(x_test, y_test),
         epochs=epochs,
-        callbacks=[ktqdm()],
+        callbacks=[ktqdm(leave_inner=False, leave_outer=False)],
         batch_size=batch_size
     )
 
 
-# In[ ]:
+# In[15]:
 
 
-def store_auprc(batch_size:int, holdout:int, auprc:float, path:str="auprcs.json"):
-    if os.path.exists("auprcs.json"):
-        with open("auprcs.json", "r") as f:
+def store_history(batch_size:int, holdout:int, auprc:float, path:str="history.json"):
+    if os.path.exists(path):
+        with open(path, "r") as f:
             auprcs = json.load(f)
     else:
         auprcs = {}
@@ -175,41 +186,45 @@ def store_auprc(batch_size:int, holdout:int, auprc:float, path:str="auprcs.json"
         auprcs[batch_size] = {}
     if holdout not in auprcs[batch_size]:
         auprcs[batch_size][holdout] = auprc
-    with open("auprcs.json", "w") as f:
+    with open(path, "w") as f:
         json.dump(auprcs, f)
 
 
-# In[ ]:
+# In[16]:
 
 
-def is_auprc_cached(batch_size:int, holdout:int, path:str="auprcs.json"):
-    with open("auprcs.json", "r") as f:
+def is_history_cached(batch_size:int, holdout:int, path:str="history.json"):
+    if not os.path.exists(path):
+        return False
+    with open(path, "r") as f:
         auprcs = json.load(f)
         return batch_size in auprcs and holdout in auprcs[batch_size]
 
 
-# In[ ]:
+# In[17]:
 
 
 def train_holdouts(batch_size:int, holdouts:int, dataset, epochs:int):
     [
-        store_auprc(
+        store_history(
             batch_size,
             holdout,
             fit(
                 mlp(26),
-                *scale_split_dataset(dataset, holdout),
+                dataset,
+                holdout,
                 epochs, 
                 batch_size
-            ).history["val_auprc"][-1])
+            ).history)
         for holdout in tqdm(range(holdouts), desc="Holdouts for batch_size {batch_size}".format(batch_size=batch_size), leave=False)
-        if not is_auprc_cached(batch_size, holdout)
+        if not is_history_cached(batch_size, holdout)
     ]
 
 
-# In[ ]:
+# In[18]:
 
 
+@Notipy("./mail_configuration.json", "Batchsize experiment on Souris has completed!")
 def train_batch_sizes(batch_sizes:List[int], datapoints:str, labels:str, holdouts:int, epochs:int):
     dataset = load_dataset(datapoints, labels)
     [
@@ -218,16 +233,16 @@ def train_batch_sizes(batch_sizes:List[int], datapoints:str, labels:str, holdout
     ]
 
 
-# In[ ]:
+# In[21]:
 
 
-def get_batch_sizes(n:int, offset:int=2):
+def get_batch_sizes(n:int, offset:int=4):
     return [
         i**2 + int(1.175**i) for i in range(offset, n+offset)
     ]
 
 
-# In[ ]:
+# In[20]:
 
 
 holdouts = 10
