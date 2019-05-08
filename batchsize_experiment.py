@@ -68,9 +68,13 @@ def isnotebook():
 if isnotebook():
     from tqdm import tqdm_notebook as tqdm
     from keras_tqdm import TQDMNotebookCallback as ktqdm
+    additional_args = {}
 else: 
     from tqdm import tqdm
     from keras_tqdm import TQDMCallback as ktqdm
+    additional_args = {
+        "ncols":100
+    }
 
 
 # In[7]:
@@ -168,7 +172,7 @@ def fit(model:Sequential, dataset, holdout, epochs:int, batch_size:int):
         verbose=0,
         validation_data=(x_test, y_test),
         epochs=epochs,
-        callbacks=[ktqdm(leave_inner=False, leave_outer=False)],
+        #callbacks=[ktqdm(leave_inner=False, leave_outer=False, ncols=10)],
         batch_size=batch_size
     )
 
@@ -205,6 +209,7 @@ def is_history_cached(batch_size:int, holdout:int, path:str="history.json"):
 
 
 def train_holdouts(batch_size:int, holdouts:int, dataset, epochs:int):
+    global additional_args
     [
         store_history(
             batch_size,
@@ -216,7 +221,7 @@ def train_holdouts(batch_size:int, holdouts:int, dataset, epochs:int):
                 epochs, 
                 batch_size
             ).history)
-        for holdout in tqdm(range(holdouts), desc="Holdouts for batch_size {batch_size}".format(batch_size=batch_size), leave=False)
+        for holdout in tqdm(range(holdouts), desc="Holdouts for batch_size {batch_size}".format(batch_size=batch_size), leave=False, **additional_args)
         if not is_history_cached(batch_size, holdout)
     ]
 
@@ -224,19 +229,20 @@ def train_holdouts(batch_size:int, holdouts:int, dataset, epochs:int):
 # In[18]:
 
 
-@Notipy("./mail_configuration.json", "Batchsize experiment on Souris has completed!")
+#@Notipy("./mail_configuration.json", "Batchsize experiment on Souris has completed!")
 def train_batch_sizes(batch_sizes:List[int], datapoints:str, labels:str, holdouts:int, epochs:int):
+    global additional_args
     dataset = load_dataset(datapoints, labels)
     [
         train_holdouts(batch_size, holdouts, dataset, epochs) 
-        for batch_size in tqdm(batch_sizes, desc="Batch sizes")
+        for batch_size in tqdm(batch_sizes, desc="Batch sizes", **additional_args)
     ]
 
 
-# In[21]:
+# In[19]:
 
 
-def get_batch_sizes(n:int, offset:int=4):
+def get_batch_sizes(n:int, offset:int=5):
     return [
         i**2 + int(1.175**i) for i in range(offset, n+offset)
     ]
