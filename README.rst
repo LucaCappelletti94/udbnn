@@ -2,7 +2,7 @@ Umbalanced dataset-aware batch-size neural networks
 ================================================================================================
 |travis| |sonar_quality| |sonar_maintainability| |sonar_coverage| |code_climate_maintainability|
 
-Small experiment on batch sizes for umbalanced datasets
+Experiment to determine whetever a large batch-size can be helpful with extremely umbalanced datasets.
 
 .. code:: shell
 
