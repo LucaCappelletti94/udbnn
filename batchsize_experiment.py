@@ -17,6 +17,7 @@ from keras import backend as K
 from keras.models import Sequential
 from keras.layers import Dense, InputLayer
 from keras.utils import print_summary
+from keras.callbacks import EarlyStopping
 import json
 from notipy_me import Notipy
 
@@ -24,6 +25,7 @@ from notipy_me import Notipy
 # In[2]:
 
 
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 tf.logging.set_verbosity(tf.logging.ERROR)
 
 
@@ -68,13 +70,9 @@ def isnotebook():
 if isnotebook():
     from tqdm import tqdm_notebook as tqdm
     from keras_tqdm import TQDMNotebookCallback as ktqdm
-    additional_args = {}
 else: 
     from tqdm import tqdm
     from keras_tqdm import TQDMCallback as ktqdm
-    additional_args = {
-        "ncols":100
-    }
 
 
 # In[7]:
@@ -172,7 +170,16 @@ def fit(model:Sequential, dataset, holdout, epochs:int, batch_size:int):
         verbose=0,
         validation_data=(x_test, y_test),
         epochs=epochs,
-        #callbacks=[ktqdm(leave_inner=False, leave_outer=False, ncols=10)],
+        callbacks=[
+            ktqdm(leave_inner=False, leave_outer=False),
+            EarlyStopping(
+                monitor="auprc",
+                min_delta=0.005,
+                patience=5,
+                mode="max",
+                restore_best_weights=True
+            )
+        ],
         batch_size=batch_size
     )
 
@@ -209,7 +216,6 @@ def is_history_cached(batch_size:int, holdout:int, path:str="history.json"):
 
 
 def train_holdouts(batch_size:int, holdouts:int, dataset, epochs:int):
-    global additional_args
     [
         store_history(
             batch_size,
@@ -221,7 +227,7 @@ def train_holdouts(batch_size:int, holdouts:int, dataset, epochs:int):
                 epochs, 
                 batch_size
             ).history)
-        for holdout in tqdm(range(holdouts), desc="Holdouts for batch_size {batch_size}".format(batch_size=batch_size), leave=False, **additional_args)
+        for holdout in tqdm(range(holdouts), desc="Holdouts for batch_size {batch_size}".format(batch_size=batch_size), leave=False)
         if not is_history_cached(batch_size, holdout)
     ]
 
@@ -229,17 +235,16 @@ def train_holdouts(batch_size:int, holdouts:int, dataset, epochs:int):
 # In[18]:
 
 
-#@Notipy("./mail_configuration.json", "Batchsize experiment on Souris has completed!")
+@Notipy("./mail_configuration.json", "Batchsize experiment on Souris has completed!")
 def train_batch_sizes(batch_sizes:List[int], datapoints:str, labels:str, holdouts:int, epochs:int):
-    global additional_args
     dataset = load_dataset(datapoints, labels)
     [
         train_holdouts(batch_size, holdouts, dataset, epochs) 
-        for batch_size in tqdm(batch_sizes, desc="Batch sizes", **additional_args)
+        for batch_size in tqdm(batch_sizes, desc="Batch sizes")
     ]
 
 
-# In[19]:
+# In[21]:
 
 
 def get_batch_sizes(n:int, offset:int=5):
@@ -248,13 +253,20 @@ def get_batch_sizes(n:int, offset:int=5):
     ]
 
 
-# In[20]:
+# In[26]:
 
 
-holdouts = 10
-epochs = 100
-batch_sizes = get_batch_sizes(50)
+holdouts = 50
+epochs = 1000
+batch_sizes = get_batch_sizes(55)
+print(batch_sizes)
 if is_gpu_available():
     print("Working with GPU!")
 train_batch_sizes(batch_sizes, "folds/x_4.csv", "folds/y_4.csv", holdouts, epochs)
+
+
+# In[ ]:
+
+
+
 
