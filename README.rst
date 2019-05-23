@@ -4,9 +4,27 @@ Umbalanced dataset-aware batch-size neural networks
 
 Experiment to determine whetever a large batch-size can be helpful with extremely umbalanced datasets.
 
+How do I get this?
+------------------------------
+Just run:
+
 .. code:: shell
 
-   pip install git+https://github.com/LucaCappelletti94/udbnn.git
+   pip install tensorflow # or tensorflow-gpu, whetever you have a gpu or not
+   git clone https://github.com/LucaCappelletti94/udbnn.git
+   cd udbnn
+   pip install .
+
+How do I run the experiments?
+--------------------------------
+Since the experiments take quite a bit to run, I suggest you to run them while in a TMUX-like environment. If available, you should consider using a computer with a tensorflow-compatible GPU.
+
+Then just run with a python shell:
+
+.. code:: python
+
+   from udbnn import run
+   run("dataset")
 
 
 .. |travis| image:: https://travis-ci.org/LucaCappelletti94/udbnn.png
