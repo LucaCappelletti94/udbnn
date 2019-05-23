@@ -3,3 +3,6 @@
 
 \.DS_Store
 *.csv
+\.vscode/
+*/__pycache__
+**/__pycache__

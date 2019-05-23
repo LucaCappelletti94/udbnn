@@ -1,0 +1,29 @@
+{
+    "datasets":[
+        {"enabled":true, "path":"folds/0"},
+        {"enabled":false, "path":"folds/1"},
+        {"enabled":false, "path":"folds/2"},
+        {"enabled":false, "path":"folds/3"},
+        {"enabled":false, "path":"folds/4"},
+        {"enabled":false, "path":"folds/5"},
+        {"enabled":false, "path":"folds/6"},
+        {"enabled":false, "path":"folds/7"},
+        {"enabled":false, "path":"folds/8"},
+        {"enabled":false, "path":"folds/9"}
+    ],
+    "holdouts":10,
+    "batch_sizes":55,
+    "training":{
+        "fit":{
+            "epochs":1000,
+            "shuffle":true
+        },
+        "early_stopping":{
+            "monitor":"auprc",
+            "min_delta":0.005,
+            "patience":5,
+            "mode":"max",
+            "restore_best_weights":true
+        }
+    }
+}

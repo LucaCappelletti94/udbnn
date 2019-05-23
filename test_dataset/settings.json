@@ -1,0 +1,20 @@
+{
+    "datasets":[
+        {"enabled":true, "path":"test"}
+    ],
+    "holdouts":1,
+    "batch_sizes":2,
+    "training":{
+        "fit":{
+            "epochs":1000,
+            "shuffle":true
+        },
+        "early_stopping":{
+            "monitor":"auprc",
+            "min_delta":0.005,
+            "patience":5,
+            "mode":"max",
+            "restore_best_weights":true
+        }
+    }
+}
