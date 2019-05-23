@@ -1,0 +1,41 @@
+dist: trusty
+sudo: false
+git:
+  depth: false
+env:
+  global:
+    - CC_TEST_REPORTER_ID=53eef44d00d3465aeaf806ea310cfc5497e7473d13ae05fbc753890c39712c60
+addons:
+  sonarcloud:
+    organization: "lucacappelletti94-github"
+    token:
+      secure: "nMVB2UES0y8j5C4c9jy1Mqk9990J5nHz40nuMMEZHFWFjYB9s1ijasfEVgI+qJdeh9crAwMs4y9Z9n4HiqvU2Dbc2aeBviVZf+R5DrFS2TJEzfK4AdjJhxiCm7dHYvdO/R8L0JBuvzUNiKBseY6YQWr64RtZAlE0/d+fZrFEIxMX/ESslxSSbQWTQ+KBIoF6nnqB+vRHce3jKU+vGQPDDAKUvaObLV+88U9XeLM7oK7baUNAQi1jPRL1owh7VDmd1IxjtMrZSFlP1G7khaius0SgSMvvvMod3wcOzRTJf6/HRf3zptZMck6V+jzvo+l4wp1pbW19orlPfefQPkSNO41Br7tcbSmBdIWtUDhR/5Nk3xUpFUji2TgoaMiXwEc/ImdmWhrk2Nm5B/HeIrvngyAGrSGglG/cuC+rVN2KoCLMiP9QaBSNdjnrddFfF9wL0h+W46Hvh24yPf4SHoOnawpMZglbuhW7wZs07zxHY0y8VPquBOY0WPdDAJa4Rjmh0tuaXBu+tfRyL4QDL/L6xz43c0x2pRZ/khvM1jj7H/RIOrq7ukfBFfhnHJCReIDA4HvLMws6D67M03kXh72Ji2edAf/NoAymFPGnD1pdMW2IEj8woJwR2lPMSvpXImLZDkqWQpdpwkzB1hp8xXPVy5GOHn2g+ABsEu4ftzAYPKQ="
+language: python
+python:
+- '3.6'
+before_install:
+  - pip install --upgrade pytest
+  - pip install tensorflow
+install:
+- pip install .[test]
+before_script:
+  - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+  - chmod +x ./cc-test-reporter
+  - ./cc-test-reporter before-build
+after_script:
+  - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
+script:
+- rm -rf .coverage
+- coverage erase
+- pytest --cov=udbnn --cov-report xml:coverage.xml 
+- coverage combine --append
+- coverage report
+- coverage xml
+- sonar-scanner
+
+after_success:
+  - coveralls
+
+notifications:
+  webhooks: https://fathomless-fjord-24024.herokuapp.com/notify
+  email: false
