@@ -5,6 +5,8 @@ import shutil
 
 def clear(target:str):
     for dataset in load_settings(target)["datasets"]:
-        shutil.rmtree("{target}/{path}/run".format(target=target, path=dataset["path"]))
+        path = "{target}/{path}/run".format(target=target, path=dataset["path"])
+        if os.path.exists(path):
+            shutil.rmtree(path)
     for csv in glob("{target}/**/*.csv", recursive=True):
         os.remove(csv)
