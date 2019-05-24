@@ -2,8 +2,38 @@
     "datasets":[
         {"enabled":true, "path":"test"}
     ],
-    "holdouts":1,
-    "batch_sizes":2,
+    "holdouts":[
+        {
+            "type":"chromosomal",
+            "chromosomes":[19],
+            "enabled":true
+        },
+        {
+            "type":"random",
+            "seed":42,
+            "enabled":false
+        },
+        {
+            "type":"chromosomal",
+            "chromosomes":[18],
+            "enabled":false
+        },
+        {
+            "type":"chromosomal",
+            "chromosomes":[18, 19],
+            "enabled":true
+        },
+        {
+            "type":"random",
+            "seed":49,
+            "enabled":true
+        }
+    ],
+    "batch_sizes":{
+        "resolution":2,
+        "seed":42
+    },
+    "max_correlation":0.95,
     "training":{
         "fit":{
             "epochs":1000,

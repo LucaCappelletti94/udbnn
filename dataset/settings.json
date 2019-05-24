@@ -1,6 +1,7 @@
 {
     "datasets":[
-        {"enabled":true, "path":"folds/0"},
+        {"enabled":true, "path":"original"},
+        {"enabled":false, "path":"folds/0"},
         {"enabled":false, "path":"folds/1"},
         {"enabled":false, "path":"folds/2"},
         {"enabled":false, "path":"folds/3"},
@@ -11,8 +12,23 @@
         {"enabled":false, "path":"folds/8"},
         {"enabled":false, "path":"folds/9"}
     ],
-    "holdouts":10,
-    "batch_sizes":55,
+    "holdouts":[
+        {
+            "type":"chromosomal",
+            "chromosomes":[19],
+            "enabled":true
+        },
+        {
+            "type":"random",
+            "seed":42,
+            "enabled":false
+        }
+    ],
+    "batch_sizes":{
+        "resolution":100,
+        "seed":42
+    },
+    "max_correlation":0.95,
     "training":{
         "fit":{
             "epochs":1000,

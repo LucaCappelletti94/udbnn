@@ -8,8 +8,9 @@ def model(input_size:int):
     model = Sequential([
         InputLayer(input_shape=(input_size,)),
         *[Dense(20, activation="relu") for i in range(2)],
-        Dropout(0.5),
+        Dropout(0.3),
         *[Dense(10, activation="relu") for i in range(2)],
+        Dropout(0.3),
         Dense(1, activation="sigmoid")
     ])
     model.compile(
