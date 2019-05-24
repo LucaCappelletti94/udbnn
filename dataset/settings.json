@@ -31,7 +31,7 @@
     "max_correlation":0.95,
     "training":{
         "fit":{
-            "epochs":1000,
+            "epochs":300,
             "shuffle":true
         },
         "early_stopping":{
