@@ -83,6 +83,6 @@ setup(
     # requirements files see:
     # https://packaging.python.org/en/latest/requirements.html
     tests_require=test_deps,
-    install_requires=["keras", "sklearn", "keras_tqdm", "tqdm", "pandas", "notipy_me", "silence_tensorflow"],
+    install_requires=["keras", "sklearn", "keras_tqdm", "tqdm", "pandas", "notipy_me", "silence_tensorflow", "extra_keras_metrics"],
     extras_require=extras,
 )
