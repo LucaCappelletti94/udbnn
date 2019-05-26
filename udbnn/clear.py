@@ -8,5 +8,5 @@ def clear(target:str):
         path = "{target}/{path}/run".format(target=target, path=dataset["path"])
         if os.path.exists(path):
             shutil.rmtree(path)
-    for csv in glob("{target}/**/*.csv", recursive=True):
-        os.remove(csv)
+        for csv in glob("{target}/{path}/*.csv".format(target=target, path=dataset["path"])):
+            os.remove(csv)
