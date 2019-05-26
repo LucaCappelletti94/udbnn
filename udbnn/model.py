@@ -1,7 +1,7 @@
+import extra_keras_metrics
+from extra_keras_utils import set_seed
 from keras.models import Sequential
 from keras.layers import InputLayer, Dense, Dropout
-from .utils import set_seed, auprc, auroc
-from keras.initializers import RandomNormal
 
 def model(input_size:int):
     """Return a multi-layer perceptron."""
@@ -15,6 +15,6 @@ def model(input_size:int):
     model.compile(
         optimizer="nadam",
         loss='binary_crossentropy',
-        metrics=[auprc, auroc, "accuracy"]
+        metrics=["auprc", "auroc", "accuracy"]
     )
     return model

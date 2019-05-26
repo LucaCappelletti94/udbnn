@@ -3,31 +3,7 @@
         {"enabled":true, "path":"test"}
     ],
     "holdouts":[
-        {
-            "type":"chromosomal",
-            "chromosomes":[19],
-            "enabled":true
-        },
-        {
-            "type":"random",
-            "seed":42,
-            "enabled":false
-        },
-        {
-            "type":"chromosomal",
-            "chromosomes":[18],
-            "enabled":false
-        },
-        {
-            "type":"chromosomal",
-            "chromosomes":[18, 19],
-            "enabled":true
-        },
-        {
-            "type":"random",
-            "seed":49,
-            "enabled":true
-        }
+        [[19], null]
     ],
     "batch_sizes":{
         "resolution":2,

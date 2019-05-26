@@ -1,10 +1,11 @@
 import pandas as pd
-from typing import Tuple, Dict
+from typing import Tuple, Dict, Callable
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.model_selection import train_test_split
 from .ungzip import ungzip
 from os.path import exists
 import numpy as np
+from holdouts_generator import holdouts_generator, chromosomal_holdouts
 
 def load_dataset(path:str, max_correlation:float)->Tuple[pd.DataFrame, pd.DataFrame]:
     if not exists("{path}/x.csv".format(path=path)):
@@ -20,20 +21,14 @@ def scale(train:pd.DataFrame, test:pd.DataFrame)->Tuple[pd.DataFrame, pd.DataFra
     scaler = MinMaxScaler().fit(train)
     return scaler.transform(train), scaler.transform(test)
 
-def split_dataset(dataset:Tuple[pd.DataFrame, pd.DataFrame], holdout:Dict, test_size:float=0.3)->Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+def normalized_holdouts_generator(dataset:Tuple[pd.DataFrame, pd.DataFrame], holdouts:Dict)->Callable:
     """Return the given dataset split among training a test set for the given random holdout.
         dataset:Tuple[np.ndarray, np.ndarray], the dataset to split.
-        holdout:Dict, the holdout to use for the random split.
+        holdouts:Dict, the settings relative to the holdouts
     """
-    if holdout["type"] == "random":
-        return train_test_split(*dataset, test_size=test_size, random_state=holdout["seed"])
-    else:
-        x, y = dataset
-        chromosomes = ["chr{chromosome}".format(chromosome=chromosome) for chromosome in holdout["chromosomes"]]
-        mask = np.array([i.split(".")[0] in chromosomes for i in x.index])
-        return x[~mask], x[mask], y[~mask], y[mask]
-
-def scale_split_dataset(dataset, holdout:Dict, test_size:float=0.3):
-    """Return split and scaled dataset."""
-    x_train, x_test, y_train, y_test = split_dataset(dataset, holdout, test_size)
-    return (*scale(x_train, x_test), y_train, y_test)
+    generator = holdouts_generator(*dataset, holdouts=chromosomal_holdouts(holdouts))
+    def scaler():
+        for (training, testing), _ in generator():
+            x_train, x_test = scale(training[0], testing[0])
+            yield (x_train, training[1]), (x_test, testing[1])
+    return scaler

@@ -1,5 +1,5 @@
 import numpy as np
-from .set_seed import set_seed
+from extra_keras_utils import set_seed
 
 def get_batch_sizes(resolution:int, size:int, seed:int, base:float=1.25, delta:int=10):
     set_seed(seed)
