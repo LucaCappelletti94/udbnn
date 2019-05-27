@@ -11,13 +11,3 @@ def is_batch_size_cached(path:str, batch_size:int, settings:Dict)->bool:
     return all([
         is_holdout_cached(path, batch_size, holdout) for holdout in settings["holdouts"]
     ])
-
-def is_dataset_cached(path:str, settings:Dict)->bool:
-    x, y = load_dataset(path, settings["max_correlation"])
-    return all([
-        is_batch_size_cached(path, batch_size, settings) for batch_size in get_batch_sizes(
-            resolution=settings["batch_sizes"]["resolution"],
-            size=x.shape[0],
-            seed=settings["batch_sizes"]["seed"]
-        )
-    ])
