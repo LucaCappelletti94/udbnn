@@ -16,7 +16,7 @@
         [[19], null]
     ],
     "batch_sizes":{
-        "resolution":50,
+        "resolution":100,
         "seed":42
     },
     "max_correlation":0.95,
@@ -27,8 +27,8 @@
         },
         "early_stopping":{
             "monitor":"auprc",
-            "min_delta":0.005,
-            "patience":10,
+            "min_delta":0.001,
+            "patience":20,
             "mode":"max",
             "restore_best_weights":true
         }
