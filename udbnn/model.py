@@ -8,7 +8,7 @@ def model(input_size:int):
     set_seed(42)
     model = Sequential([
         InputLayer(input_shape=(input_size,)),
-        *[Dense(80, activation="relu") for i in range(2)],
+        *[Dense(80, activation="relu") for _ in range(2)],
         Dropout(0.2),
         Dense(1, activation="sigmoid")
     ])
