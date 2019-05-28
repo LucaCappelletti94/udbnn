@@ -36,10 +36,13 @@ def train_datasets(target:str):
     for path in tqdm(datasets, desc="Datasets"): 
         train_holdout(path, settings)
 
-#@Notipy("batchsize experiment", send_start_mail=True)
-def run(target:str):
+def run(target:str, notipy:bool=False):
     if not is_gpu_available():
         print("No GPU was detected!")
     if not is_tmux():
         print("Not running within TMUX!")
-    train_datasets(target)
+    if notipy:
+        with Notipy("batchsize experiment", send_start_mail=True):
+            train_datasets(target)
+    else:
+        train_datasets(target)
