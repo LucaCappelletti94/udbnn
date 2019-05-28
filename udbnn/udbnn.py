@@ -36,7 +36,7 @@ def train_datasets(target:str):
     for path in tqdm(datasets, desc="Datasets"): 
         train_holdout(path, settings)
 
-#@Notipy("./mail_configuration.json", "Batchsize experiment has completed!")
+#@Notipy("batchsize experiment", send_start_mail=True)
 def run(target:str):
     if not is_gpu_available():
         print("No GPU was detected!")
