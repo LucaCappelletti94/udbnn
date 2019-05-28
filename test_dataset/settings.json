@@ -7,7 +7,8 @@
     ],
     "batch_sizes":{
         "resolution":2,
-        "seed":42
+        "seed":42,
+        "minimum":20
     },
     "max_correlation":0.95,
     "training":{

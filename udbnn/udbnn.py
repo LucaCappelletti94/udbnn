@@ -12,6 +12,7 @@ def train_batch_sizes(dataset_path:str, holdout, training:Tuple, testing:Tuple, 
     batch_sizes = [
         v for v in get_batch_sizes(
             resolution=settings["batch_sizes"]["resolution"],
+            minimum=settings["batch_sizes"]["minimum"],
             size=training[0].shape[0],
             seed=settings["batch_sizes"]["seed"]
         ) if not is_batch_size_cached(dataset_path, v, settings)

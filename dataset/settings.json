@@ -17,6 +17,7 @@
     ],
     "batch_sizes":{
         "resolution":100,
+        "minimum":20,
         "seed":42
     },
     "max_correlation":0.95,
