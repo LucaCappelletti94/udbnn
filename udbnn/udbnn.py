@@ -8,7 +8,7 @@ from auto_tqdm import tqdm
 from environments_utils import is_tmux
 from extra_keras_utils import is_gpu_available
 
-def train_batch_sizes(dataset_path:str, holdout, training:Tuple, testing:Tuple, settings:Dict):
+def train_batch_sizes(dataset_path:str, holdout, training:Tuple, testing:Tuple, settings:Dict, N:Notipy):
     batch_sizes = [
         v for v in get_batch_sizes(
             resolution=settings["batch_sizes"]["resolution"],
@@ -20,14 +20,16 @@ def train_batch_sizes(dataset_path:str, holdout, training:Tuple, testing:Tuple, 
     for batch_size in tqdm(batch_sizes, desc="Batch sizes", leave=False):
         if not is_holdout_cached(dataset_path, batch_size, holdout):
             with open("{dataset_path}/history.json".format(dataset_path=get_history_path(dataset_path, batch_size, holdout)), "w") as f:
-                pd.DataFrame(fit(training, testing, batch_size, settings).history).to_json(f)
+                history = pd.DataFrame(fit(training, testing, batch_size, settings).history)
+                N.add_report(history[["auprc", "val_auprc"]].tail(1))
+                history.to_json(f)
 
-def train_holdout(dataset_path:str, settings:Dict):
+def train_holdout(dataset_path:str, settings:Dict, N:Notipy):
     dataset = load_dataset(dataset_path, settings["max_correlation"])    
     for holdout, (training, testing) in zip(settings["holdouts"], normalized_holdouts_generator(dataset, settings["holdouts"])()):
-        train_batch_sizes(dataset_path, holdout, training, testing, settings)
+        train_batch_sizes(dataset_path, holdout, training, testing, settings, N)
 
-def train_datasets(target:str):
+def train_datasets(target:str, N:Notipy):
     settings = load_settings(target)
     datasets = [
         "{target}/{path}".format(target=target, path=dataset["path"])
@@ -35,15 +37,12 @@ def train_datasets(target:str):
         if dataset["enabled"]
     ]
     for path in tqdm(datasets, desc="Datasets"): 
-        train_holdout(path, settings)
+        train_holdout(path, settings, N)
 
-def run(target:str, notipy:bool=False):
+def run(target:str):
     if not is_gpu_available():
         print("No GPU was detected!")
     if not is_tmux():
         print("Not running within TMUX!")
-    if notipy:
-        with Notipy("batchsize experiment", send_start_mail=True):
-            train_datasets(target)
-    else:
-        train_datasets(target)
+    with Notipy() as N:
+        train_datasets(target, N) 
