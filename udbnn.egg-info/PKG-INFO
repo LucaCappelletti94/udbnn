@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: udbnn
-Version: 0.0.3
+Version: 0.0.5
 Summary: Experiment to determine whetever a large batch-size can be helpful with extremely umbalanced datasets.
 Home-page: https://github.com/LucaCappelletti94/udbnn
 Author: Luca Cappelletti

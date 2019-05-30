@@ -21,7 +21,10 @@ def train_batch_sizes(dataset_path:str, holdout, training:Tuple, testing:Tuple, 
         if not is_holdout_cached(dataset_path, batch_size, holdout):
             with open("{dataset_path}/history.json".format(dataset_path=get_history_path(dataset_path, batch_size, holdout)), "w") as f:
                 history = pd.DataFrame(fit(training, testing, batch_size, settings).history)
-                N.add_report(history[["auprc", "val_auprc"]].tail(1))
+                row = history[["auprc", "val_auprc"]].tail(1)
+                row.index = [batch_size]
+                row.index.name = "Batch size"
+                N.add_report(row)
                 history.to_json(f)
 
 def train_holdout(dataset_path:str, settings:Dict, N:Notipy):
