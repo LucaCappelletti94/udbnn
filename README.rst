@@ -1,44 +1,61 @@
-Umbalanced dataset-aware batch-size neural networks
-================================================================================================
-|travis| |sonar_quality| |sonar_maintainability| |sonar_coverage| |code_climate_maintainability|
+udbnn
+=========================================================================================
+|travis| |sonar_quality| |sonar_maintainability| |codacy| |code_climate_maintainability| |pip| |downloads|
 
 Experiment to determine whetever a large batch-size can be helpful with extremely umbalanced datasets.
 
-How do I get this?
-------------------------------
-Just run:
+How do I install this package?
+----------------------------------------------
+As usual, just download it using pip:
 
 .. code:: shell
 
-   pip install tensorflow # or tensorflow-gpu, whetever you have a gpu or not
-   git clone https://github.com/LucaCappelletti94/udbnn.git
-   cd udbnn
-   pip install .
+    pip install udbnn
 
-How do I run the experiments?
---------------------------------
-Since the experiments take quite a bit to run, I suggest you to run them while in a TMUX-like environment. If available, you should consider using a computer with a tensorflow-compatible GPU.
+Tests Coverage
+----------------------------------------------
+Since some software handling coverages sometime get slightly different results, here's three of them:
 
-Then just run with a python shell:
+|coveralls| |sonar_coverage| |code_climate_coverage|
 
-.. code:: python
-
-   from udbnn import run
-   run("dataset")
-
+AFTER
 
 .. |travis| image:: https://travis-ci.org/LucaCappelletti94/udbnn.png
    :target: https://travis-ci.org/LucaCappelletti94/udbnn
+   :alt: Travis CI build
 
 .. |sonar_quality| image:: https://sonarcloud.io/api/project_badges/measure?project=LucaCappelletti94_udbnn&metric=alert_status
     :target: https://sonarcloud.io/dashboard/index/LucaCappelletti94_udbnn
+    :alt: SonarCloud Quality
 
 .. |sonar_maintainability| image:: https://sonarcloud.io/api/project_badges/measure?project=LucaCappelletti94_udbnn&metric=sqale_rating
     :target: https://sonarcloud.io/dashboard/index/LucaCappelletti94_udbnn
+    :alt: SonarCloud Maintainability
 
 .. |sonar_coverage| image:: https://sonarcloud.io/api/project_badges/measure?project=LucaCappelletti94_udbnn&metric=coverage
     :target: https://sonarcloud.io/dashboard/index/LucaCappelletti94_udbnn
+    :alt: SonarCloud Coverage
 
-.. |code_climate_maintainability| image:: https://api.codeclimate.com/v1/badges/25fb7c6119e188dbd12c/maintainability
-   :target: https://codeclimate.com/github/LucaCappelletti94/udbnn/maintainability
-   :alt: Maintainability
+.. |coveralls| image:: https://coveralls.io/repos/github/LucaCappelletti94/udbnn/badge.svg?branch=master
+    :target: https://coveralls.io/github/LucaCappelletti94/udbnn?branch=master
+    :alt: Coveralls Coverage
+
+.. |pip| image:: https://badge.fury.io/py/udbnn.svg
+    :target: https://badge.fury.io/py/udbnn
+    :alt: Pypi project
+
+.. |downloads| image:: https://pepy.tech/badge/udbnn
+    :target: https://pepy.tech/badge/udbnn
+    :alt: Pypi total project downloads 
+
+.. |codacy|  image:: https://api.codacy.com/project/badge/Grade/9768b69bfd1f45968d652d3be1485e61
+    :target: https://www.codacy.com/app/LucaCappelletti94/udbnn?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=LucaCappelletti94/udbnn&amp;utm_campaign=Badge_Grade
+    :alt: Codacy Maintainability
+
+.. |code_climate_maintainability| image:: https://api.codeclimate.com/v1/badges/109572a7da55a939e097/maintainability
+    :target: https://codeclimate.com/github/LucaCappelletti94/udbnn/maintainability
+    :alt: Maintainability
+
+.. |code_climate_coverage| image:: https://api.codeclimate.com/v1/badges/109572a7da55a939e097/test_coverage
+    :target: https://codeclimate.com/github/LucaCappelletti94/udbnn/test_coverage
+    :alt: Code Climate Coverate

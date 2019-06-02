@@ -1,17 +1,20 @@
 
 
+\.DS_Store
+
 *.csv
 
 **/__pycache__
-\.vscode/
+
+.notipy.json
+
+*/__pycache__/*
 
 */__pycache__
 
-*/__pycache__/*
+\.vscode/
 
 \.ipynb_checkpoints/
 
 .notipy.json
-\.DS_Store
-
 **/__pycache__/*
