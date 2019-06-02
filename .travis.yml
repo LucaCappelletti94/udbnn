@@ -37,6 +37,7 @@ script:
 - sonar-scanner
 after_success:
 - coveralls
+- python-codacy-coverage -r coverage.xml
 notifications:
   webhooks: https://fathomless-fjord-24024.herokuapp.com/notify
   email: false
