@@ -18,7 +18,16 @@ Since some software handling coverages sometime get slightly different results, 
 
 |coveralls| |sonar_coverage| |code_climate_coverage|
 
-AFTER
+How do I run the experiments?
+--------------------------------
+Since the experiments take quite a bit to run, I suggest you to run them while in a TMUX-like environment. If available, you should consider using a computer with a tensorflow-compatible GPU.
+
+Then just run with a python shell:
+
+.. code:: python
+
+   from udbnn import run
+   run("dataset")
 
 .. |travis| image:: https://travis-ci.org/LucaCappelletti94/udbnn.png
    :target: https://travis-ci.org/LucaCappelletti94/udbnn
