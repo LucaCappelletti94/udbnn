@@ -1,1 +1,2 @@
-__version__ = "0.0.5"
+"""Current version of package udbnn"""
+__version__ = "0.0.6"

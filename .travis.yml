@@ -4,38 +4,40 @@ git:
   depth: false
 env:
   global:
-    - CC_TEST_REPORTER_ID=53eef44d00d3465aeaf806ea310cfc5497e7473d13ae05fbc753890c39712c60
+  - CC_TEST_REPORTER_ID=53eef44d00d3465aeaf806ea310cfc5497e7473d13ae05fbc753890c39712c60
+  - secure: E/c1FWrVo1rXM/zYRbDGg3zYUolRIl+JOOHKvlMYFy6TybboxEexcR8l8lD4T4GQKBqo1EmjzlsjXCDpuy6tRtLYqP0xzAmn1g2jzHdC+Ga682l42UVk/HWFJsSrn6dISuFOwDb46Q/kFPTq1dw3zhl45nD+R9dubGms4rxR2BfG01I6xEP0scGeSlXcWq1purDVsXiVMUf379NItiBg8AKVkgnOqMkseRNjRCYvXSUkxxkYpB683qNkRCUNiMRYLFVw4ea3JTsHjKSEEkX9x6UY8+nxuNiTM+/tNqjGOMHghlpTaS9+8A+MepDSdDn4lJy6XdmWd3DnI1stt/76/Pxv/b3KE1vAXwHKt8r9ovyYpeRKLpT5e0mM8t+cORTxT+CjqlawN5UQLW7pvLpuRBe73wvsDhnsJ8vfJBGK46KYwLDFWGU9MwnQ+OLR+lncecW+EkcmIBDRGE/cr2LwvHTqRs2g+OpKZXVaHUIECfivI3KnejOx+J6uNGv6uacCstaI+ubuSYC7dMUHSv/U0vMF451PxoZ2dg20b7QlXqXCoff5DuNyPr0yPAjoSwWIpS8Sd2xL/WRZElvsn2KhZxR38Mb8rPpjdrV0dbpnH8pOXwVhEu8T9QfL53/PZJDj9wypLfb4R/kJtnH+qpDS5zeHyuCc5IcLs8JVmr5MI+A=
+  - secure: aeOI2Rhehs/lzUS3ciFHlgKhxFqw1pbLAJakmRtYm12hM0+4JhjsNaWv9YM8mpJLvNfA6D7FuvDnOsOUTjp62BxVuwmJjgUNJEjKZm4bVwNOfruDrLo2RqQBuYCqwJJh63Lf9bl8jF8mrse/QN/ooay5L2lQNt9i8vtFEbe5rEBluQ7fo6vXoxGJKDDObEmtTHCdt+u9XaLYBN7IM0dOGPgrbm9gHo2AzgUEhh+qMsW8vnEJEat862/6cBOuIxJVvhk9B5w6Nu8Yyo0ZLUJFVESyp/TWUN32qmYC5iT3e6UhyutU5Bj+K4QxvsC/3GsDdFl9wIO85jewQVvy0pAXytNs4zd8Gt/5Yx45VRh5eTw2zJ7SyxOa7OzKwaFhRHhNTSD5fjFf4Wco43Miap/2rV5XR4d5SZU8XGgmtj4aEXtMTytfs1zML0g7xcvR0CjebttmAKHzt1N6ghue66eB+Z1gP8KDgYBNfcCsBrthDPA0Wl4UE+qFMHDwWn6flglS8WFbRIjWuEQGmiNFZa5ceDZWgeHATJ30yKRzTHGl64RT26r2PWlWYJuv24sYMVa5wTl7gJFAgEG4hxjsFYEQRfFGYiQUC/9J+H30Vf75zxbCogMvSKzUMs3X1Qu6k54tP6opUx8dikKZAbS7RDycxgjSLmZ0x8PhppxX2B5FK3Y=
 addons:
   sonarcloud:
-    organization: "lucacappelletti94-github"
+    organization: lucacappelletti94-github
     token:
-      secure: "nMVB2UES0y8j5C4c9jy1Mqk9990J5nHz40nuMMEZHFWFjYB9s1ijasfEVgI+qJdeh9crAwMs4y9Z9n4HiqvU2Dbc2aeBviVZf+R5DrFS2TJEzfK4AdjJhxiCm7dHYvdO/R8L0JBuvzUNiKBseY6YQWr64RtZAlE0/d+fZrFEIxMX/ESslxSSbQWTQ+KBIoF6nnqB+vRHce3jKU+vGQPDDAKUvaObLV+88U9XeLM7oK7baUNAQi1jPRL1owh7VDmd1IxjtMrZSFlP1G7khaius0SgSMvvvMod3wcOzRTJf6/HRf3zptZMck6V+jzvo+l4wp1pbW19orlPfefQPkSNO41Br7tcbSmBdIWtUDhR/5Nk3xUpFUji2TgoaMiXwEc/ImdmWhrk2Nm5B/HeIrvngyAGrSGglG/cuC+rVN2KoCLMiP9QaBSNdjnrddFfF9wL0h+W46Hvh24yPf4SHoOnawpMZglbuhW7wZs07zxHY0y8VPquBOY0WPdDAJa4Rjmh0tuaXBu+tfRyL4QDL/L6xz43c0x2pRZ/khvM1jj7H/RIOrq7ukfBFfhnHJCReIDA4HvLMws6D67M03kXh72Ji2edAf/NoAymFPGnD1pdMW2IEj8woJwR2lPMSvpXImLZDkqWQpdpwkzB1hp8xXPVy5GOHn2g+ABsEu4ftzAYPKQ="
+      secure: nMVB2UES0y8j5C4c9jy1Mqk9990J5nHz40nuMMEZHFWFjYB9s1ijasfEVgI+qJdeh9crAwMs4y9Z9n4HiqvU2Dbc2aeBviVZf+R5DrFS2TJEzfK4AdjJhxiCm7dHYvdO/R8L0JBuvzUNiKBseY6YQWr64RtZAlE0/d+fZrFEIxMX/ESslxSSbQWTQ+KBIoF6nnqB+vRHce3jKU+vGQPDDAKUvaObLV+88U9XeLM7oK7baUNAQi1jPRL1owh7VDmd1IxjtMrZSFlP1G7khaius0SgSMvvvMod3wcOzRTJf6/HRf3zptZMck6V+jzvo+l4wp1pbW19orlPfefQPkSNO41Br7tcbSmBdIWtUDhR/5Nk3xUpFUji2TgoaMiXwEc/ImdmWhrk2Nm5B/HeIrvngyAGrSGglG/cuC+rVN2KoCLMiP9QaBSNdjnrddFfF9wL0h+W46Hvh24yPf4SHoOnawpMZglbuhW7wZs07zxHY0y8VPquBOY0WPdDAJa4Rjmh0tuaXBu+tfRyL4QDL/L6xz43c0x2pRZ/khvM1jj7H/RIOrq7ukfBFfhnHJCReIDA4HvLMws6D67M03kXh72Ji2edAf/NoAymFPGnD1pdMW2IEj8woJwR2lPMSvpXImLZDkqWQpdpwkzB1hp8xXPVy5GOHn2g+ABsEu4ftzAYPKQ=
 language: python
 python:
 - '3.6'
 before_install:
-  - pip install --upgrade pytest
-  - pip install tensorflow
+- pip install --upgrade pytest
+- pip install tensorflow
 install:
 - pip install .[test]
 before_script:
-  - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
-  - chmod +x ./cc-test-reporter
-  - ./cc-test-reporter before-build
+- curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64
+  > ./cc-test-reporter
+- chmod +x ./cc-test-reporter
+- "./cc-test-reporter before-build"
 after_script:
-  - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
+- "./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT"
 script:
 - rm -rf .coverage
 - coverage erase
-- pytest --cov=udbnn --cov-report xml:coverage.xml 
+- pytest --cov=udbnn --cov-report xml:coverage.xml
 - coverage combine --append
 - coverage report
 - coverage xml
 - sonar-scanner
-
 after_success:
-  - coveralls
-
+- coveralls
+- python-codacy-coverage -r coverage.xml
 notifications:
   webhooks: https://fathomless-fjord-24024.herokuapp.com/notify
   email: false
