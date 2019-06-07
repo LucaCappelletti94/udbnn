@@ -30,7 +30,8 @@ def find_version(*file_paths):
 
 __version__ = find_version("udbnn", "__version__.py")
 
-test_deps =["pytest-cov", "validate_version_code", "codacy-coverage", "coveralls", "pytest"]
+test_deps = ["pytest-cov", "validate_version_code",
+             "codacy-coverage", "coveralls", "pytest"]
 
 extras = {
     'test': test_deps,
@@ -55,6 +56,7 @@ setup(
     packages=find_packages(exclude=['contrib', 'docs', 'tests*']),
     tests_require=test_deps,
     # Add here the package dependencies
-    install_requires=["keras_tqdm", "keras", "sklearn", "extra_keras_utils", "notipy_me", "holdouts_generator", "extra_keras_metrics", "auto_tqdm", "pandas", "tqdm", "silence_tensorflow"],
+    install_requires=["keras_tqdm", "keras", "sklearn", "extra_keras_utils", "notipy_me", "holdouts_generator",
+                      "extra_keras_metrics", "auto_tqdm", "pandas", "tqdm", "silence_tensorflow", "plot_keras_history"],
     extras_require=extras,
 )
