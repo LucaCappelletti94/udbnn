@@ -15,7 +15,7 @@ def collect(target:str):
         dfs.append(tail)
         
     concat = pd.concat(dfs).sort_index()
-    concat.index.name = "Batch sizes"
+    concat.index.name = "Batch sizes (log10)"
     os.makedirs("history", exist_ok=True)
     plot_history(concat, customization_callback=customize_axis, path="history", single_graphs=True)
     os.makedirs("interpolated_history", exist_ok=True)

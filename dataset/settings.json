@@ -16,7 +16,7 @@
         [[19], null]
     ],
     "batch_sizes":{
-        "resolution":100,
+        "resolution":115,
         "minimum":20,
         "seed":42
     },
