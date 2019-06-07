@@ -10,13 +10,9 @@ def collect(target:str):
     histories = list(glob("{target}/**/history.json".format(target=target), recursive=True))
     dfs = []
     for history in histories:
-        try:
-            tail = pd.read_json(history).tail(1)
-            tail.index = [int(history.split("/")[-4])]
-            dfs.append(tail)
-        except Exception:
-            print(history)
-            os.remove(history)
+        tail = pd.read_json(history).tail(1)
+        tail.index = [int(history.split("/")[-4])]
+        dfs.append(tail)
         
     concat = pd.concat(dfs).sort_index()
     concat.index.name = "Batch sizes"
