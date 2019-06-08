@@ -8,5 +8,6 @@ def get_batch_sizes(resolution:int, minimum:int, size:int, seed:int, base:float=
     np.random.shuffle(batch_sizes)
     batch_sizes = minimum+np.ceil(batch_sizes/np.max(batch_sizes)*(size-minimum)).astype(int)
     batch_sizes = np.array(list(set(batch_sizes[batch_sizes<100])))
+    batch_sizes = batch_sizes[int(batch_sizes.size/2):]
     print(batch_sizes)
     return batch_sizes
