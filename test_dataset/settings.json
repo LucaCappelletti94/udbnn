@@ -6,14 +6,14 @@
         [[19], null]
     ],
     "batch_sizes":{
-        "resolution":2,
+        "resolution":10,
         "seed":42,
         "minimum":20
     },
     "max_correlation":0.95,
     "training":{
         "fit":{
-            "epochs":1000,
+            "epochs":2,
             "shuffle":true
         },
         "early_stopping":{

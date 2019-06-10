@@ -13,9 +13,12 @@ def collect(target:str):
         tail = pd.read_json(history).tail(1)
         tail.index = [int(history.split("/")[-4])]
         dfs.append(tail)
-        
+
     concat = pd.concat(dfs).sort_index()
     concat.index.name = "Batch sizes (log10)"
+
+    concat.to_csv("history.csv")
+
     os.makedirs("history", exist_ok=True)
     plot_history(concat, customization_callback=customize_axis, path="history", single_graphs=True)
     os.makedirs("interpolated_history", exist_ok=True)
